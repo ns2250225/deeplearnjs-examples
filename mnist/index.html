@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>deeplearnjs-Mnist</title>
+</head>
+<style>
+    canvas {
+        width: 100px;
+    }
+
+    .pred {
+        font-size: 30px;
+        width: 100px;
+    }
+
+    .pred-correct {
+        background-color: #00cf00;
+    }
+
+    .pred-incorrect {
+        background-color: red;
+    }
+
+    .pred-container {
+        display: inline-block;
+        width: 100px;
+        margin: 10px;
+    }
+</style>
+<body>
+    <input type="button" value="Run" onclick="myMnist();">
+    <div id="status"></div>
+    <div id="message">
+        <br>
+        <br>
+    </div>
+    <div id="images">
+    </div>
+
+    <script src="https://unpkg.com/deeplearn@0.4.2/dist/deeplearn.js"></script>
+    <script src="app.js"></script>
+
+</body>
+</html>
