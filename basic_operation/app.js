@@ -1,43 +1,33 @@
-// 创建 tensor 张量
-function create_tensor() {
-    console.log("创建基础tensor张量...")
-    // dl.scalar(value[number|boolean], dtype[float32|int32|bool])
-    dl.scalar(3.14).print();
-    // dl.tensor1d(value[TypedArray|Array], dtype[float32|int32|bool])
-    dl.tensor1d([1, 2, 3]).print();
-    // dl.tensor2d(value[TypedArray|Array], shape[number,number], dtype[float32|int32|bool])
-    dl.tensor2d([1, 2, 3, 4], [2, 2]).print();
-    // dl.tensor3d(value[TypedArray|Array], shape[number,number,number], dtype[float32|int32|bool])
-    dl.tensor3d([1, 2, 3, 4], [2, 2, 1]).print();
-    // dl.tensor4d(value[TypedArray|Array], shape[number,number,number,number], dtype[float32|int32|bool])
-    dl.tensor4d([1, 2, 3, 4], [1, 2, 2, 1]).print();
-    // dl.variable(initialValue[tensor], trainable[bool], name[string], dtype[float32|int32|bool])
-    dl.variable(dl.tensor([1, 2, 3])).print();
+/**
+ * 预测线性方程 y = 3x + 2 的参数
+ * 其中 3 为 Weights, 2 为 Biases 
+ */
+
+// 创建数据集，这里创建5个x，和5个y
+const x_data = dl.tensor1d([0, 1, 2, 3, 4]);
+const a = dl.scalar(3)
+const b = dl.scalar(2)
+const y_data = x_data.mul(a).add(b)
+
+// 接着生成我们要求解的两个参数Weights和Biases
+const Weights = dl.variable(dl.randomUniform([1]))
+const Biases = dl.variable(dl.zeros([1]))
+
+// 接着定义预测的y值，损失函数和optimizer
+// 损失函数指的是预测值与实际值之间的差别
+// 神经网络的重点就是通过优化器来减少误差，提升参数的准确度
+// 这里用平方差值作为损失函数，用gradient descent作为优化器
+const f = x => Weights.mul(x).add(Biases);
+const loss = (pred, label) => pred.sub(label).square().mean()
+const learningRate = 0.01
+const optimizer = dl.train.sgd(learningRate)
+
+// 训练模型，训练500次
+for (let i = 0; i < 500; i++) {
+    optimizer.minimize(() => loss(f(x_data), y_data))
 }
 
-
-// tensor张量的类型转换
-function transformations() {
-    console.log("tensor的类型转换...")
-    // 转换tensor的dtype
-    var x = dl.tensor1d([1.5, 2.5, 3]);
-    dl.cast(x, 'int32').print();
-
-    // 增加tensor的秩
-    var x = dl.tensor1d([1, 2, 3, 4]);
-    const axis = 1;
-    x.expandDims(axis).print();
-
-    //
-    var x = dl.tensor1d([1, 2, 3, 4]);
-    x.pad([[1, 2]]).print();
-
-    // 更改tensor的shape
-    var x = dl.tensor1d([1, 2, 3, 4]);
-    x.reshape([2, 2]).print();
-
-    //
-    var x = dl.tensor([1, 2, 3, 4], [1, 1, 4]);
-    x.squeeze().print();
-}
-
+// 预测出参数Weights和Biases
+console.log(
+    `Weights: ${Weights.dataSync()}, Biases: ${Biases.dataSync()}`
+)
