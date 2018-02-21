@@ -4,3 +4,5 @@
 # 启动
 - 打开index.html并观察console
 
+# 效果
+![](1.png)
