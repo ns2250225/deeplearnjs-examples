@@ -9,16 +9,6 @@ for (let i=0; i<100; i++) {
         c: tmp_x > 40 && tmp_y > 40 ? 1: 0
     })
 }
-// 画出初始化散点图
-const chart = new G2.Chart({
-container: 'c1',    
-width : 600,        
-height : 300        
-})
-chart.source(data)
-chart.point().position('x*y').color('c')
-chart.render()
-
 
 /**
  * 以下部分为deeplearn.js
@@ -58,28 +48,65 @@ const b_predict = Biases.dataSync()
 
 console.log(w_predict, b_predict)
 
-// 绘出结果直线
-const line_data = [
-    {
-        x: 0,
-        y: (100 * -w_predict[0] - b_predict[0]) / w_predict[1]
+
+// 散点图数据
+const data_scatter1 = []
+const data_scatter2 = []
+for (let elem of data) {
+    if (elem.x > 40 && elem.y > 40) {
+        data_scatter1.push([elem.x, elem.y])
+    } else {
+        data_scatter2.push([elem.x, elem.y])
+    }  
+}
+// 直线数据
+const data_line = [
+    [0, parseFloat((100 * -w_predict[0] - b_predict[0])/w_predict[1])],
+    [100, parseFloat((0 * -w_predict[0] - b_predict[0])/w_predict[1])]
+]
+console.log(data_line)
+
+// 绘出结果图形
+var options = {
+    title: {
+        text: 'deeplearn.js的逻辑回归'                 
     },
-    {
-        x: 100,
-        y: (0 * -w_predict[0] - b_predict[0]) / w_predict[1]
-    }
-] 
-
-
-const chart2 = new G2.Chart({
-    container: 'c1',    
-    width : 600,        
-    height : 300        
-})
-
-chart2.source(line_data)
-chart2.line().position('x*y')
-chart2.render();
+    xAxis: {
+        min: 0,
+        max: 100
+    },
+    yAxis: {
+        min: 0,
+        max: 100
+    },
+    series: [
+        {
+            type: 'line',
+            color: '#030303',
+            data: data_line
+        },  
+        {
+            type: 'scatter',
+            marker: {
+                symbol: 'cross',  
+                radius: 4         
+            },
+            color: '#FF0000',
+            data: data_scatter1
+        },
+        {
+            type: 'scatter',
+            marker: {
+                symbol: 'cross',  
+                radius: 4         
+            },
+            color: '#6B8E23',
+            data: data_scatter2
+        }
+    ]
+}
+// 图表初始化函数
+var chart = Highcharts.chart('container', options);
 
 
 
