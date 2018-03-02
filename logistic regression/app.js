@@ -30,7 +30,8 @@ const Biases = dl.variable(dl.zeros([1]))
 
 // 定义模型和损失函数
 const f = x => dl.sigmoid(Weights.matMul(x).add(Biases))
-const loss = (pred, label) => pred.sub(label).square().mean() 
+// const loss = (pred, label) => pred.sub(label).square().mean() 
+const loss = (pred, label) => dl.mean(dl.neg(dl.sum(dl.mul(label, dl.log(pred)))))
 
 // 定义优化器，这里用sgd
 const learningRate = 0.001
@@ -61,8 +62,8 @@ for (let elem of data) {
 }
 // 直线数据
 const data_line = [
-    [0, parseFloat((100 * -w_predict[0] - b_predict[0])/w_predict[1])],
-    [100, parseFloat((0 * -w_predict[0] - b_predict[0])/w_predict[1])]
+    [0, parseFloat((100 * w_predict[0] + b_predict[0])/w_predict[1])],
+    [100, parseFloat((0 * w_predict[0] + b_predict[0])/w_predict[1])]
 ]
 console.log(data_line)
 
