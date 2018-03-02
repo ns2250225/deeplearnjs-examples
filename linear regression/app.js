@@ -1,20 +1,15 @@
+
 // 初始化图形数据
-const data = [] 
+const data1 = [] 
 for (let i=0; i<100; i++) {
-    data.push({
-        x: Math.random() * 10,
-        y: Math.random() * 10
+    let tmp_x = Math.random() * 10
+    let offset = Math.random() * 10
+    let tmp_y = tmp_x * 3 + offset
+    data1.push({
+        x: tmp_x,
+        y: tmp_y
     })
 }
-// 画出初始化散点图
-const chart = new G2.Chart({
-container: 'c1',    
-width : 600,        
-height : 300        
-})
-chart.source(data)
-chart.point().position('x*y')
-chart.render()
 
 
 /**
@@ -23,7 +18,7 @@ chart.render()
 const x_list = []
 const y_list = []
 
-for (let elem of data) {
+for (let elem of data1) {
     x_list.push(elem.x)
     y_list.push(elem.y)
 }
@@ -42,7 +37,7 @@ const learningRate = 0.01
 const optimizer = dl.train.sgd(learningRate)
 
 // 训练模型
-for (let i = 0; i < 10; i++) {
+for (let i = 0; i < 100; i++) {
     optimizer.minimize(() => loss(f(x_data), y_data))
 }
 
@@ -51,29 +46,49 @@ for (let i = 0; i < 10; i++) {
 const w_predict = Weights.dataSync()
 const b_predict = Biases.dataSync()
 
-// 绘出结果直线
-line_data = [
-    {
-        x: 0,
-        y: 0 * w_predict + b_predict
-    },
-    {
-        x: 10,
-        y: 10 * w_predict + b_predict
-    },
-    data
+// 散点图数据
+const data_scatter = []
+for (let elem of data1) {
+    data_scatter.push([elem.x, elem.y])
+}
+// 直线数据
+const data_line = [
+    [0, parseFloat(0 * w_predict + b_predict)],
+    [10, parseFloat(10 * w_predict + b_predict)]
 ]
 
-const chart2 = new G2.Chart({
-    container: 'c1',    
-    width : 600,        
-    height : 300        
-})
+// 绘出结果直线-散点图
+var options = {
+    title: {
+        text: 'deeplearn.js的线性回归'                 
+    },
+    xAxis: {
+        min: 0,
+        max: 10
+    },
+    yAxis: {
+        min: 0,
+        max: 60
+    },
+    series: [
+        {
+            type: 'line',
+            data: data_line
+        },  
+        {
+            type: 'scatter',
+            marker: {
+                symbol: 'cross',  
+                radius: 4         
+            },
+            data: data_scatter
+        }
+    ]
+}
+// 图表初始化函数
+var chart = Highcharts.chart('container', options);
 
-chart2.source(line_data)
-chart2.line().position('x*y')
-chart2.render();
-
+                    
 
 
 
